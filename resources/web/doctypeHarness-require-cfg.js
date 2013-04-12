@@ -1,2 +1,1 @@
 requireCfg['paths']['doctypeHarness'] = CONTEXT_PATH+'content/doctypeHarness/resources/web';
-// requireCfg['paths']['bootstrap'] = CONTEXT_PATH+'content/doctypeHarness/resources/web/bootstrap/js/bootstrap.min';
