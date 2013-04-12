@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin title="doctypeHarness" loader="OVERRIDING">
+
+  <static-paths>
+    <static-path url="/doctypeHarness/resources" localFolder="resources"/>
+  </static-paths>
+
+  <external-resources>
+    <file context="requirejs">content/doctypeHarness/resources/web/doctypeHarness-require-cfg.js</file>
+  </external-resources>
+</plugin>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<settings>
+    
+    <!-- set this to true for production, and false for development/localization -->
+    <cache-messages>true</cache-messages>
+    
+</settings>

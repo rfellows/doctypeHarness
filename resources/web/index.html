@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Test harness for doctypes</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+	
+	<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
+
+  <style type="text/css">
+    .hidden { display: none; }
+  </style>
+
+  <script type="text/javascript" src="webcontext.js?context=doctypeHarness"></script>
+  <script type="text/javascript" src="../../../analyzer/scripts/filechooser/filechooser.nocache.js"></script>
+	
+  <!-- bootstrap needs a newer version of jquery than we provide via webcontext. -->
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+	<script type="text/javascript" src="bootstrap/js/bootstrap.js"></script>
+	
+	<script type="text/javascript">
+    FULL_QUALIFIED_URL = "http://" + window.location.host + "/pentaho/";
+
+    var availableDocTypes = {
+      html5: {
+        name: "HTML 5",
+        link: "html5.html",
+        description: "The new standard"
+      },
+      html4_01_quirks: {
+        name: "HTML 4.01 Transitional - Quirks mode",
+        link: "html4_01_quirks.html",
+        description: "Forces Quirks mode"
+      },
+      html4_01_strict: {
+        name: "HTML 4.01 Strict",
+        link: "html4_01_strict.html",
+        description: "This DTD contains all HTML elements and attributes, but does NOT INCLUDE presentational or deprecated elements (like font). Framesets are not allowed."
+      },
+      html4_01_transitional: {
+        name: "HTML 4.01 Transitional",
+        link: "html4_01_transitional.html",
+        description: "This DTD contains all HTML elements and attributes, INCLUDING presentational and deprecated elements (like font). Framesets are not allowed."
+      },
+      html4_01_frameset: {
+        name: "HTML 4.01 Frameset",
+        link: "html4_01_frameset.html",
+        description: "This DTD is equal to HTML 4.01 Transitional, but allows the use of frameset content."
+      },
+      xhtml1_0_strict: {
+        name: "XHTML 1.0 Strict",
+        link: "xhtml1_0_strict.html",
+        description: "This DTD contains all HTML elements and attributes, but does NOT INCLUDE presentational or deprecated elements (like font). Framesets are not allowed. The markup must also be written as well-formed XML."
+      },
+      xhtml1_0_transitional: {
+        name: "XHTML 1.0 Transitional",
+        link: "xhtml1_0_transitional.html",
+        description: "This DTD contains all HTML elements and attributes, INCLUDING presentational and deprecated elements (like font). Framesets are not allowed. The markup must also be written as well-formed XML."
+      },
+      xhtml1_0_frameset: {
+        name: "XHTML 1.0 Frameset",
+        link: "xhtml1_0_frameset.html",
+        description: "This DTD is equal to XHTML 1.0 Transitional, but allows the use of frameset content."
+      },
+      xhtml1_1: {
+        name: "XHTML 1.1",
+        link: "xhtml1_1.html",
+        description: "This DTD is equal to XHTML 1.0 Strict, but allows you to add modules (for example to provide ruby support for East-Asian languages)."
+      }
+    };
+
+    var contentTypeViewers = {
+      prpt: 'viewer',
+      prpti: 'prpti.edit',
+      xanalyzer: 'editor',
+      xdash: 'editor',
+      xaction: 'generatedContent'
+    };
+
+		function init() {
+      // create the radio buttons for the doctypes
+      $.each(availableDocTypes, function(i, dt) {
+        var id="doctype_" + i;
+        var radioDef = 
+          "<tr><td><input id='" + id + "' type='radio' name='doctype' onClick='validate();' value='" + dt.link + "'></input></td>" + 
+          "<td>" + dt.name + "</td><td>" + dt.description + "</td>" +
+          "</tr>";          
+
+        $("#doctypeSelectionContainer").append(radioDef);
+      });
+
+      $('#browseBtn').on('click', chooseFile);
+      $('#goBtn').on('click', openFileInDoctypeFrame);
+		}
+
+    function chooseFile() {
+      openFileChooserDialog({
+          fileSelected : function(repositoryFile, filePath, fileName, title) {
+              $("#solutionFile").val(filePath);
+              validate();
+          },
+          dialogCanceled : function(){}
+      }, $("#solutionFile").val());
+    }
+
+    function openFileInDoctypeFrame() {
+      var repositoryPath = $("#solutionFile").val().replace(/\//g, ":");
+      var now = new Date();
+      var link = $('input[name=doctype]:checked');
+      var extension = repositoryPath.substr( (repositoryPath.lastIndexOf('.') +1) );
+      var viewMode = contentTypeViewers[extension];
+
+      if(link.length > 0) {
+        var url = link.val() + "?filepath=" + repositoryPath + "/" + viewMode + "?ts=" + now.getTime();
+        window.location = url;        
+      } 
+    }
+
+    function validate() {
+      var doctypeSelected = $('input[name=doctype]:checked').length > 0;
+      var fileSelected = $("#solutionFile").val().length > 0;
+      var go = $('#goBtn');
+      if(doctypeSelected && fileSelected) {
+        go.removeAttr("disabled");
+        go.removeClass("disabled");
+      } else {
+        go.attr("disabled", "disabled");  
+        go.addClass("disabled");
+      }
+      
+    }
+
+    $(document).ready(init);
+
+	</script>
+
+</head>
+
+<body>
+
+  <div class="hero-unit">
+    <h1>DOCTYPE Test Harness</h1>
+    <p>Test how any content type will render when contained in an iFrame and it's parent DOCTYPE is set to...</p>
+  </div>
+
+  <p>
+    <form id="doctypeForm">
+      <table class="table">
+        <thead>
+          <th width="30px"></th>
+          <th width="250px">DOCTYPE</th>
+          <th>Description</th>
+        </thead>
+        <tbody id="doctypeSelectionContainer">
+
+        </tbody>
+      </table>
+
+      <p/>
+    </form>
+
+    <div class="form-inline">  
+      <input id="solutionFile" type="text" class="span10" value="">
+      <button id="browseBtn" class="btn">Browse...</button>
+      <button id="goBtn" class="btn disabled" disabled="disabled">Go</button>
+    </div>
+  </p> 
+	<p/>
+
+  <small>
+    <div>For more info on doctypes, you can check out a few links:</div>
+    <ul>
+      <li><a href="http://www.w3schools.com/tags/tag_doctype.asp">w3schools</a></li>
+      <li><a href="http://en.wikipedia.org/wiki/Quirks_mode">Wikipedia - Quirks mode</a></li>
+      <li><a href="http://en.wikipedia.org/wiki/Document_Type_Declaration">Wikipedia - Document Type Declaration</a></li>
+    </ul>    
+  </small>
+
+</body>
+
+</html>
