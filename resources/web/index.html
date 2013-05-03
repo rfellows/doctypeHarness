@@ -90,7 +90,19 @@
 
       $('#browseBtn').on('click', chooseFile);
       $('#goBtn').on('click', openFileInDoctypeFrame);
+      $('#newAnalyzerBtn').on('click', function(evt) { newContent("xanalyzer/service/selectSchema") });
+      $('#newIrBtn').on('click', function(evt) { newContent("pentaho-interactive-reporting/prpti.new") });
+      $('#newDashboardBtn').on('click', function(evt) { newContent("dashboards/editor") });
 		}
+
+    function newContent(/*String*/ restPath) {
+      var now = new Date();
+      var link = $('input[name=doctype]:checked');
+      if(link.length > 0) {
+        var url = link.val() + "?filepath=" + restPath;
+        window.location = url;
+      } 
+    }
 
     function chooseFile() {
       openFileChooserDialog({
@@ -119,6 +131,26 @@
       var doctypeSelected = $('input[name=doctype]:checked').length > 0;
       var fileSelected = $("#solutionFile").val().length > 0;
       var go = $('#goBtn');
+      var aBtn = $('#newAnalyzerBtn');
+      var irBtn = $('#newIrBtn');
+      var dBtn = $('#newDashboardBtn');
+
+      if(doctypeSelected) {
+        aBtn.removeAttr("disabled");
+        aBtn.removeClass("disabled");
+        irBtn.removeAttr("disabled");
+        irBtn.removeClass("disabled");
+        dBtn.removeAttr("disabled");
+        dBtn.removeClass("disabled");
+      } else {
+        aBtn.attr("disabled", "disabled");  
+        aBtn.addClass("disabled");
+        irBtn.attr("disabled", "disabled");  
+        irBtn.addClass("disabled");
+        dBtn.attr("disabled", "disabled");  
+        dBtn.addClass("disabled");
+      }
+
       if(doctypeSelected && fileSelected) {
         go.removeAttr("disabled");
         go.removeClass("disabled");
@@ -158,10 +190,24 @@
       <p/>
     </form>
 
+    <div class="well">
+    <p>
+      Select a file from the repository
+    </p>
     <div class="form-inline">  
       <input id="solutionFile" type="text" class="span10" value="">
       <button id="browseBtn" class="btn">Browse...</button>
       <button id="goBtn" class="btn disabled" disabled="disabled">Go</button>
+    </div>
+    <p>
+      <h5>-- OR --</h5>
+      Create new...
+    </p>
+    <div>
+      <button id="newAnalyzerBtn" class="btn disabled" disabled="disabled">New Analyzer</button>
+      <button id="newIrBtn" class="btn disabled" disabled="disabled">New Interactive Report</button>
+      <button id="newDashboardBtn" class="btn disabled" disabled="disabled">New Dashboard</button>
+    </div>
     </div>
   </p> 
 	<p/>
